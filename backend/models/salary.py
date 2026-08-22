@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, J
 from sqlalchemy import func
 #sql alchemy writes sql for simple python operations.
 from db.database import Base
-from sqlalchemy import Column, Integer, String, Numeric, ForeignKey
+from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from db import Base
@@ -20,6 +20,7 @@ class Player(Base):
 
 class PlayerSeason(Base):
     __tablename__ = "player_seasons"
+    __table_args__ = (UniqueConstraint("player_id", "season", "team", name="uq_player_season_team"),)
 
     id = Column(Integer, primary_key=True)
     player_id = Column(Integer, ForeignKey("players.id"), nullable=False)
