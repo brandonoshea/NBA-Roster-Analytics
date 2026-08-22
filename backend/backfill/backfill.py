@@ -1,5 +1,5 @@
 """
-Backfill salary data (2014-2024) into Postgres.
+Backfill salary data (2014-2026) into Postgres.
 
 Scope, deliberately: SALARY ONLY. No stats, no FastAPI, no frontend.
 Goal: player_seasons rows exist, salary populated, stats left null,
@@ -29,7 +29,7 @@ TEAMS = [
     "OKC", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "TOR", "UTA", "WAS",
 ]
 
-YEARS = range(2014, 2025)
+YEARS = range(2014, 2027)
 
 # Charlotte rebranded Bobcats -> Hornets for the 2014-15 season; basketball-reference
 # keeps the old "CHA" code only for 2014, "CHO" for every season since.
@@ -175,6 +175,10 @@ def upsert_player_season(db, player: Player, row: dict):
             team=row["team"],
             salary=row["salary"],
         ))
+        # Flush so a duplicate row later in the same team/year batch (bref
+        # sometimes lists a waived-and-re-signed player twice) is caught by
+        # the existing-check above instead of hitting the unique constraint.
+        db.flush()
 
 
 def main():
