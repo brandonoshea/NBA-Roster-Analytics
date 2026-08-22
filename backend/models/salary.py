@@ -14,6 +14,8 @@ class Player(Base):
     id = Column(Integer, primary_key=True)
     full_name = Column(String, nullable=False)
     position = Column(String, nullable=True)
+    nba_api_id = Column(String, unique=True, nullable=True)
+    bref_id = Column(String, unique=True, nullable=True)
 
     seasons = relationship("PlayerSeason", back_populates="player")
 
