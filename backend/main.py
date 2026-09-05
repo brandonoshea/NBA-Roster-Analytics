@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
+from routers import player_routes
 
 app = FastAPI(title="NBA Roster Analytics API",
               version="0.1.0",
@@ -15,6 +16,8 @@ app.add_middleware(
     allow_headers=["*"]
 
 )
+
+app.include_router(player_routes.router)
 
 if __name__ == "__main__":
     import uvicorn
