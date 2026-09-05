@@ -53,31 +53,39 @@ session.headers.update(HEADERS)
 def fetch_html(team: str, year: int) -> str | None:
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     cache_path = CACHE_DIR / f"{team}_{year}.html"
+    url = f"https://www.basketball-reference.com/teams/{_bref_team_code(team, year)}/{year}.html"
+    return fetch_page(url, cache_path)
 
+
+def fetch_page(url: str, cache_path: Path) -> str | None:
+    """
+    Generic cached-fetch-with-retry, shared by fetch_html (team/season pages)
+    and other backfill scripts that need a different bref page/cache layout
+    (e.g. per-player pages for headshots).
+    """
     if cache_path.exists():
         return cache_path.read_text(encoding="utf-8")
-
-    url = f"https://www.basketball-reference.com/teams/{_bref_team_code(team, year)}/{year}.html"
 
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             resp = session.get(url, timeout=10)
             if resp.status_code == 200:
                 resp.encoding = "utf-8"  # bref sends no charset header; requests mis-guesses ISO-8859-1 and mangles accented names
+                cache_path.parent.mkdir(parents=True, exist_ok=True)
                 cache_path.write_text(resp.text, encoding="utf-8")
                 return resp.text
             elif resp.status_code == 429:
                 wait = 30 * attempt
-                log.warning(f"Rate limited on {team} {year}, waiting {wait}s")
+                log.warning(f"Rate limited on {url}, waiting {wait}s")
                 time.sleep(wait)
             else:
-                log.warning(f"{team} {year} returned status {resp.status_code}")
+                log.warning(f"{url} returned status {resp.status_code}")
                 return None
         except requests.RequestException as e:
-            log.warning(f"Request error for {team} {year} (attempt {attempt}): {e}")
+            log.warning(f"Request error for {url} (attempt {attempt}): {e}")
             time.sleep(5 * attempt)
 
-    log.error(f"Giving up on {team} {year} after {MAX_RETRIES} attempts")
+    log.error(f"Giving up on {url} after {MAX_RETRIES} attempts")
     return None
 
 

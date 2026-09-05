@@ -12,6 +12,7 @@ class Player(Base):
     position = Column(String, nullable=True)
     nba_api_id = Column(String, unique=True, nullable=True)
     bref_id = Column(String, unique=True, nullable=True)
+    headshot_url = Column(String, nullable=True)
 
     seasons = relationship("PlayerSeason", back_populates="player")
 
