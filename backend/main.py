@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
 
-app = FastAPI(title="NBA Roster Analytics API", 
+app = FastAPI(title="NBA Roster Analytics API",
               version="0.1.0",
               docs_url="/docs",
               redoc_url="/redoc")
