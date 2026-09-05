@@ -55,4 +55,43 @@ def list_players(
 
     return players
 
-@router.get("/{player_id}", response_model=PlayerListItem)
+@router.get("/{player_id}", response_model=list[PlayerListItem])
+def get_player(player_id: int, db: Session = Depends(get_db)):
+    seasons = (
+        db.query(
+            Player.id.label("player_id"),
+            Player.full_name,
+            Player.position,
+            Player.headshot_url,
+            PlayerSeason.season,
+            PlayerSeason.team,
+            PlayerSeason.salary,
+            PlayerSeason.points,
+            PlayerSeason.rebounds,
+            PlayerSeason.assists,
+            PlayerSeason.games_played,
+            PlayerSeason.games_started,
+            PlayerSeason.minutes_played,
+            PlayerSeason.per,
+            PlayerSeason.true_shooting_pct,
+            PlayerSeason.usage_pct,
+            PlayerSeason.offensive_win_shares,
+            PlayerSeason.defensive_win_shares,
+            PlayerSeason.win_shares,
+            PlayerSeason.win_shares_per_48,
+            PlayerSeason.offensive_bpm,
+            PlayerSeason.defensive_bpm,
+            PlayerSeason.box_plus_minus,
+            PlayerSeason.vorp,
+        )
+        .join(Player, Player.id == PlayerSeason.player_id)
+        .filter(Player.id == player_id)
+        .order_by(PlayerSeason.season.desc())
+        .limit(10)
+        .all()
+    )
+
+    if not seasons:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    return seasons
