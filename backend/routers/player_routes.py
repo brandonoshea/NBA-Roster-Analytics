@@ -54,3 +54,5 @@ def list_players(
     )
 
     return players
+
+@router.get("/{player_id}", response_model=PlayerListItem)
