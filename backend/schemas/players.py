@@ -25,6 +25,9 @@ class PlayerSeasonOut(BaseModel):
     defensive_bpm: Optional[Decimal] = None
     box_plus_minus: Optional[Decimal] = None
     vorp: Optional[Decimal] = None
+    predicted_salary: Optional[Decimal] = None
+    verdict: Optional[str] = None
+    delta_pct: Optional[Decimal] = None
 
     class Config:
         from_attributes = True
@@ -54,6 +57,9 @@ class PlayerListItem(BaseModel):
     defensive_bpm: Optional[Decimal] = None
     box_plus_minus: Optional[Decimal] = None
     vorp: Optional[Decimal] = None
+    predicted_salary: Optional[Decimal] = None
+    verdict: Optional[str] = None
+    delta_pct: Optional[Decimal] = None
 
     class Config:
         from_attributes = True

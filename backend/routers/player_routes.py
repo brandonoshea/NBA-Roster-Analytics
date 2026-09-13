@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from db.database import get_db
 from models.salary import Player
 from models.salary import PlayerSeason
+from models.valuation import PlayerValuation
 from schemas.players import PlayerListItem, PlayerSeasonOut
 
 router = APIRouter(
@@ -44,8 +45,16 @@ def list_players(
             PlayerSeason.defensive_bpm,
             PlayerSeason.box_plus_minus,
             PlayerSeason.vorp,
+            PlayerValuation.predicted_salary,
+            PlayerValuation.verdict,
+            PlayerValuation.delta_pct,
         )
         .join(Player, Player.id == PlayerSeason.player_id)
+        .outerjoin(
+            PlayerValuation,
+            (PlayerValuation.player_id == Player.id)
+            & (PlayerValuation.season == PlayerSeason.season),
+        )
         .filter(PlayerSeason.season == latest_season)
         .order_by(PlayerSeason.points.desc().nullslast())
         .offset(skip)
@@ -83,8 +92,16 @@ def get_player(player_id: int, db: Session = Depends(get_db)):
             PlayerSeason.defensive_bpm,
             PlayerSeason.box_plus_minus,
             PlayerSeason.vorp,
+            PlayerValuation.predicted_salary,
+            PlayerValuation.verdict,
+            PlayerValuation.delta_pct,
         )
         .join(Player, Player.id == PlayerSeason.player_id)
+        .outerjoin(
+            PlayerValuation,
+            (PlayerValuation.player_id == Player.id)
+            & (PlayerValuation.season == PlayerSeason.season),
+        )
         .filter(Player.id == player_id)
         .order_by(PlayerSeason.season.desc())
         .limit(10)
