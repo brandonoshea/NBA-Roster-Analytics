@@ -5,7 +5,11 @@ from core.config import settings
 
 # Engine manages the actual connection(s) to the database (pooling, dialect, etc.).
 # DATABASE_URL comes from settings so the same code works across dev/test/prod.
-engine = create_engine(settings.DATABASE_URL)
+# check_same_thread=False is only relevant for the sqlite file the test suite
+# points at (see tests/conftest.py) -- FastAPI runs sync endpoints in a worker
+# thread, and sqlite3 otherwise refuses to reuse a connection across threads.
+_connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
+engine = create_engine(settings.DATABASE_URL, connect_args=_connect_args)
 
 # Factory for new Session objects, all bound to the engine above.
 # autocommit=False / autoflush=False give explicit control over when changes
