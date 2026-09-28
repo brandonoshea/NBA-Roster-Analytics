@@ -1,0 +1,27 @@
+export type Player = {
+  player_id: number;
+  full_name: string;
+  season: number;
+  team: string;
+  salary: string;
+  points: string;
+  rebounds: string;
+  assists: string;
+  games_played: number;
+  games_started: number;
+  minutes_played: string;
+  per: string;
+  true_shooting_pct: string;
+  usage_pct: string;
+  offensive_win_shares: string;
+  defensive_win_shares: string;
+  win_shares: string;
+  win_shares_per_48: string;
+  offensive_bpm: string;
+  defensive_bpm: string;
+  box_plus_minus: string;
+  vorp: string;
+  predicted_salary: string;
+  verdict: string;
+  delta_pct: string;
+};
