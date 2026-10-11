@@ -1,18 +1,16 @@
-import { useState } from 'react'
+import { Route, Routes } from 'react-router-dom'
 import { Title } from './components/Title'
 import { MainTable } from './components/Maintable'
-import { useEffect } from 'react'
-
+import { PlayerProfile } from './components/PlayerProfile'
 
 function App() {
-  
-
   return (
     <>
       <Title />
-      <MainTable />
-
-      
+      <Routes>
+        <Route path="/" element={<MainTable />} />
+        <Route path="/players/:playerId" element={<PlayerProfile />} />
+      </Routes>
     </>
   )
 }

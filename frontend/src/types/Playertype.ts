@@ -25,3 +25,28 @@ export type Player = {
   verdict: string;
   delta_pct: string;
 };
+
+export type PlayerSeasonDetail = {
+  player_id: number;
+  full_name: string;
+  season: number;
+  team: string;
+  position: string | null;
+  headshot_url: string | null;
+  salary: string | null;
+  points: string | null;
+  rebounds: string | null;
+  assists: string | null;
+  games_played: number | null;
+  games_started: number | null;
+  minutes_played: string | null;
+  per: string | null;
+  true_shooting_pct: string | null;
+  usage_pct: string | null;
+  win_shares: string | null;
+  box_plus_minus: string | null;
+  vorp: string | null;
+  predicted_salary: string | null;
+  verdict: string | null;
+  delta_pct: string | null;
+};

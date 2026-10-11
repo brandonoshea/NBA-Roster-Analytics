@@ -1,42 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Player } from "../types/Playertype";
-
-const currency = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-});
-
-function formatSalary(value: string | null | undefined) {
-  if (value === null || value === undefined) return "—";
-  const num = Number(value);
-  return Number.isFinite(num) ? currency.format(num) : "—";
-}
-
-function formatDelta(value: string | null | undefined) {
-  if (value === null || value === undefined) return "—";
-  const num = Number(value);
-  if (!Number.isFinite(num)) return "—";
-  const sign = num > 0 ? "+" : "";
-  return `${sign}${num.toFixed(1)}%`;
-}
-
-function verdictColor(verdict: string | null | undefined) {
-  switch (verdict) {
-    case "Underpaid":
-      return "#00C805";
-    case "Overpaid":
-      return "#FF5000";
-    default:
-      return "rgba(255,255,255,0.6)";
-  }
-}
-
-function deltaColor(value: string | null | undefined) {
-  const num = Number(value);
-  if (!Number.isFinite(num) || num === 0) return "text-white/60";
-  return num < 0 ? "text-[#00C805]" : "text-[#FF5000]";
-}
+import { deltaColor, formatDelta, formatSalary, verdictColor } from "../utils/format";
 
 type SortKey =
   | "full_name"
@@ -83,6 +48,7 @@ function getSortValue(player: Player, key: SortKey): number | string {
 const PAGE_SIZE_OPTIONS = [25, 50, 100] as const;
 
 export function MainTable() {
+  const navigate = useNavigate();
   const [data, setData] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -212,7 +178,8 @@ export function MainTable() {
             {pagedData.map((player) => (
               <tr
                 key={`${player.player_id}-${player.team}`}
-                className="transition-colors odd:bg-white/[0.015] hover:bg-white/[0.06]"
+                onClick={() => navigate(`/players/${player.player_id}`)}
+                className="cursor-pointer transition-colors odd:bg-white/[0.015] hover:bg-white/[0.06]"
               >
                 <td className="px-5 py-3.5 font-semibold text-white">{player.full_name}</td>
                 <td className="px-5 py-3.5 text-white/45">{player.team}</td>
