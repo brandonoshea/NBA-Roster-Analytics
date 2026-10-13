@@ -13,6 +13,7 @@ from schemas.rosters import RosterCreate, RosterOut, RosterPlayerAdd, RosterSumm
 router = APIRouter(prefix="/rosters", tags=["rosters"])
 
 MAX_ROSTER_SIZE = 15
+MIN_ROSTER_SIZE = 8
 
 
 def _player_rows(db: Session, roster_id: int):
@@ -93,6 +94,11 @@ def _roster_out(db: Session, roster: Roster) -> RosterOut:
 @router.post("", response_model=RosterOut, status_code=201)
 def create_roster(payload: RosterCreate, db: Session = Depends(get_db)):
     player_ids = list(dict.fromkeys(payload.player_ids))
+
+    if len(player_ids) < MIN_ROSTER_SIZE:
+        raise HTTPException(
+            status_code=400, detail=f"Roster must have at least {MIN_ROSTER_SIZE} players"
+        )
 
     if len(player_ids) > MAX_ROSTER_SIZE:
         raise HTTPException(
@@ -191,6 +197,16 @@ def remove_player(roster_id: int, player_id: int, db: Session = Depends(get_db))
     )
     if not entry:
         raise HTTPException(status_code=404, detail="Player is not on this roster")
+
+    current_count = (
+        db.query(func.count(RosterPlayer.id))
+        .filter(RosterPlayer.roster_id == roster_id)
+        .scalar()
+    )
+    if current_count <= MIN_ROSTER_SIZE:
+        raise HTTPException(
+            status_code=400, detail=f"Roster must have at least {MIN_ROSTER_SIZE} players"
+        )
 
     db.delete(entry)
     db.commit()

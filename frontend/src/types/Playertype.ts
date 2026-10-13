@@ -1,6 +1,7 @@
 export type Player = {
   player_id: number;
   full_name: string;
+  position: string | null;
   season: number;
   team: string;
   salary: string;

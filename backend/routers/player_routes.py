@@ -25,6 +25,7 @@ def list_players(
         db.query(
             Player.id.label("player_id"),
             Player.full_name,
+            Player.position,
             PlayerSeason.season,
             PlayerSeason.team,
             PlayerSeason.salary,

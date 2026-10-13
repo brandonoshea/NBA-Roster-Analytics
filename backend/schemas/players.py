@@ -5,6 +5,7 @@ from decimal import Decimal
 class PlayerSeasonOut(BaseModel):
     player_id: int
     full_name: str
+    position: Optional[str] = None
     season: int
     team: str
     salary: Optional[Decimal] = None
